@@ -1,68 +1,675 @@
-```html
 <!DOCTYPE html>
-<html>
+<html lang="th" class="dark">
 <head>
-    <title>Game Developer</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Developer Minimalist Resume - Interactive Template</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        game: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                             accent: '#8b5cf6',
+                            highlight: '#f43f5e'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Sarabun', 'Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Sarabun', 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .font-code {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Glassmorphism effects */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .light .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        /* Editable focus styling */
+        [contenteditable="true"] {
+            transition: all 0.2s ease;
+        }
+        [contenteditable="true"]:hover {
+            outline: 2px dashed #14b8a6;
+            border-radius: 4px;
+            cursor: text;
+        }
+        [contenteditable="true"]:focus {
+            outline: 2px solid #8b5cf6;
+            background-color: rgba(139, 92, 246, 0.1);
+            border-radius: 4px;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #14b8a6;
+        }
+
+        /* Print Optimization */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .glass-card {
+                background: #ffffff !important;
+                border: 1px solid #cbd5e1 !important;
+                box-shadow: none !important;
+            }
+            .print-break {
+                page-break-inside: avoid;
+            }
+            a {
+                text-decoration: underline;
+                color: #0f172a !important;
+            }
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-20 selection:bg-teal-500 selection:text-white">
 
-<nav>
-    <b>YN.</b>
-    <div>
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#contact">Contact</a>
+    <!-- Floating Toolbar -->
+    <aside class="no-print fixed bottom-6 right-6 z-50 flex flex-wrap items-center gap-2 bg-slate-900/90 dark:bg-slate-900/90 light:bg-white/90 backdrop-blur-xl p-2.5 rounded-2xl border border-slate-700/60 shadow-2xl">
+        <!-- Edit Mode Toggle Button -->
+        <button id="editToggleBtn" onclick="toggleEditMode()" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 transition-all border border-slate-700 hover:border-teal-500">
+            <i class="fa-solid fa-pen-to-square text-teal-400"></i>
+            <span id="editBtnText">โหมดแก้ไข</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button id="soundBtn" onclick="toggleSound()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all border border-slate-700" title="เปิด/ปิด เสียง">
+            <i class="fa-solid fa-volume-high text-amber-400" id="soundIcon"></i>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 dark:text-teal-300 transition-all border border-slate-700" title="สลับโหมดสว่าง/มืด">
+            <i class="fa-solid fa-sun dark:inline hidden"></i>
+            <i class="fa-solid fa-moon dark:hidden inline text-purple-400"></i>
+        </button>
+
+        <!-- Export PDF / Print -->
+        <button onclick="triggerPrint()" class="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-white transition-all shadow-lg shadow-teal-500/20">
+            <i class="fa-solid fa-print"></i>
+            <span>ดาวน์โหลด PDF</span>
+        </button>
+    </aside>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="no-print fixed top-6 right-6 z-50 hidden bg-teal-600 text-white px-4 py-2.5 rounded-xl shadow-2xl font-medium text-xs flex items-center gap-2 border border-teal-400/30 animate-bounce">
+        <i class="fa-solid fa-circle-info text-sm"></i>
+        <span id="toastText">เปิดโหมดแก้ไขแล้ว: คลิกข้อความบนหน้าเพื่อแก้ไขได้ทันที</span>
     </div>
-</nav>
 
-<section class="hero">
-    <small>GAME DEVELOPER</small>
-    <h1>Your Name</h1>
-    <p>Creating games and interactive experiences.</p>
-    <a class="btn" href="#projects">View Projects →</a>
-</section>
+    <!-- MAIN RESUME WRAPPER -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
 
-<section id="about">
-    <h2>About Me</h2>
-    <p>
-        I'm a game developer interested in gameplay,
-        game design and programming.
-    </p>
-</section>
+        <!-- HEADER SECTION -->
+        <header class="glass-card rounded-3xl p-6 sm:p-8 mb-8 relative overflow-hidden shadow-2xl">
+            <!-- Neon background glows -->
+            <div class="absolute -top-20 -right-20 w-64 h-64 bg-teal-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-<section id="projects">
-    <h2>Projects</h2>
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+                <!-- Main Info -->
+                <div class="space-y-3 flex-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-code bg-teal-500/10 border border-teal-500/30 text-teal-400 font-medium">
+                        <span class="w-2 h-2 rounded-full bg-teal-400 animate-ping"></span>
+                        <span contenteditable="false" class="editable-field">READY FOR NEW GAME PROJECTS</span>
+                    </div>
 
-    <div class="project">
-        <h3>Game Title</h3>
-        <p>2D adventure game made with Unity and C#.</p>
-        <small>Unity · C#</small>
-    </div>
+                    <h1 contenteditable="false" class="editable-field text-3xl sm:text-5xl font-extrabold tracking-tight text-white dark:text-slate-100">
+                        Charin Phuaphumcharoen
+                    </h1>
 
-    <div class="project">
-        <h3>Game Title 2</h3>
-        <p>3D game project created with Unreal Engine.</p>
-        <small>Unreal · C++</small>
-    </div>
-</section>
+                    <p contenteditable="false" class="editable-field text-lg font-code text-teal-400 dark:text-teal-400 font-semibold">
+                        Lead Gameplay Engineer & Graphics Programmer
+                    </p>
 
-<section>
-    <h2>Skills</h2>
-    <p>Unity · Unreal Engine · C# · C++ · Git · Blender</p>
-</section>
+                    <p contenteditable="false" class="editable-field text-slate-300 dark:text-slate-300 text-sm leading-relaxed max-w-2xl">
+                        วิศวกรซอฟต์แวร์เกมผู้เชี่ยวชาญการพัฒนาด้วย Unity (C#) & Unreal Engine 5 (C++) หลงใหลการสร้าง Game Physics, Custom Shader HLSL, AI Pathfinding และ Network Optimization สำหรับเกม Multiplayer บน PC/Console
+                    </p>
+                </div>
 
-<section id="contact">
-    <h2>Contact</h2>
-    <p>your@email.com</p>
-    <p>GitHub · Itch.io · LinkedIn</p>
-</section>
+                <!-- Game Avatar Badge -->
+                <div class="flex-shrink-0 self-center md:self-auto">
+                    <div class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl bg-gradient-to-br from-teal-400 via-purple-500 to-rose-500 p-1 shadow-2xl">
+                        <div class="w-full h-full bg-slate-900 rounded-[14px] flex flex-col items-center justify-center relative overflow-hidden group">
+                            <i class="fa-solid fa-gamepad text-5xl text-teal-400 group-hover:scale-110 transition-transform duration-300"></i>
+                            <span class="text-[10px] font-code text-slate-400 mt-2">LVL 99 ENGINEER</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-<footer>
-    © 2026 Your Name
-</footer>
+            <!-- Contact & Social Links -->
+            <div class="mt-8 pt-6 border-t border-slate-700/60 grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-code text-slate-300">
+                <a href="mailto:dev@gamedev-studio.com" class="flex items-center gap-2 hover:text-teal-400 transition-colors">
+                    <i class="fa-solid fa-envelope text-teal-400"></i>
+                    <span contenteditable="false" class="editable-field">dev@gamedev-studio.com</span>
+                </a>
+                <a href="https://github.com" target="_blank" class="flex items-center gap-2 hover:text-teal-400 transition-colors">
+                    <i class="fa-brands fa-github text-purple-400"></i>
+                    <span contenteditable="false" class="editable-field">github.com/gamedev-pro</span>
+                </a>
+                <a href="https://itch.io" target="_blank" class="flex items-center gap-2 hover:text-teal-400 transition-colors">
+                    <i class="fa-brands fa-italic text-rose-400"></i>
+                    <span contenteditable="false" class="editable-field">mygames.itch.io</span>
+                </a>
+                <div class="flex items-center gap-2 text-slate-300">
+                    <i class="fa-solid fa-location-dot text-amber-400"></i>
+                    <span contenteditable="false" class="editable-field">กรุงเทพมหานคร, ประเทศไทย</span>
+                </div>
+            </div>
+        </header>
 
+        <!-- QUICK STATS MATRIX -->
+        <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="glass-card rounded-2xl p-4 text-center hover:border-teal-500/50 transition-all">
+                <div contenteditable="false" class="editable-field text-2xl font-bold font-code text-teal-400">6+ Years</div>
+                <div contenteditable="false" class="editable-field text-xs text-slate-400 mt-1">ประสบการณ์พัฒนาเกม</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 text-center hover:border-purple-500/50 transition-all">
+                <div contenteditable="false" class="editable-field text-2xl font-bold font-code text-purple-400">4 Titles</div>
+                <div contenteditable="false" class="editable-field text-xs text-slate-400 mt-1">เกมวางขาย Steam & Console</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 text-center hover:border-amber-500/50 transition-all">
+                <div contenteditable="false" class="editable-field text-2xl font-bold font-code text-amber-400">60+ FPS</div>
+                <div contenteditable="false" class="editable-field text-xs text-slate-400 mt-1">Target Optimization</div>
+            </div>
+            <div class="glass-card rounded-2xl p-4 text-center hover:border-rose-500/50 transition-all">
+                <div contenteditable="false" class="editable-field text-2xl font-bold font-code text-rose-400">12 Jams</div>
+                <div contenteditable="false" class="editable-field text-xs text-slate-400 mt-1">Game Jam Accomplished</div>
+            </div>
+        </section>
+
+        <!-- MAIN LAYOUT GRID -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- LEFT MAIN COLUMN (2/3) -->
+            <div class="lg:col-span-2 space-y-8">
+
+                <!-- FEATURED PROJECTS (FILTERABLE) -->
+                <section class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl print-break">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-trophy text-amber-400"></i>
+                            <span contenteditable="false" class="editable-field">ผลงานเกมเด่น (Featured Games)</span>
+                        </h2>
+
+                        <!-- Category Filters -->
+                        <div class="no-print flex flex-wrap gap-1.5 text-xs font-code bg-slate-900/80 p-1 rounded-xl border border-slate-700/60">
+                            <button onclick="filterProjects('all')" class="filter-btn active px-3 py-1 rounded-lg bg-teal-500 text-white font-semibold transition-all">ทั้งหมด</button>
+                            <button onclick="filterProjects('pc')" class="filter-btn px-3 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition-all">PC/Console</button>
+                            <button onclick="filterProjects('mobile')" class="filter-btn px-3 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition-all">Mobile</button>
+                            <button onclick="filterProjects('jam')" class="filter-btn px-3 py-1 rounded-lg hover:bg-slate-800 text-slate-300 transition-all">Game Jams</button>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6" id="projectsContainer">
+                        
+                        <!-- Project Card 1 -->
+                        <div class="project-item pc group bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-teal-500/50 rounded-2xl p-5 transition-all duration-300">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <h3 contenteditable="false" class="editable-field font-bold text-lg text-white group-hover:text-teal-400 transition-colors flex items-center gap-2">
+                                    Aetheria: Echoes of Time
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-code bg-teal-500/20 text-teal-300 border border-teal-500/30">Steam Published</span>
+                                </h3>
+                                <span contenteditable="false" class="editable-field text-xs font-code text-slate-400">Unreal Engine 5 • C++ • GAS</span>
+                            </div>
+                            <p contenteditable="false" class="editable-field text-xs sm:text-sm text-slate-300 mb-3 leading-relaxed">
+                                เกม 3D Action RPG บน PC/Steam ออกแบบระบบ Combat Abilities ด้วย Gameplay Ability System (GAS), พัฒนาระบบ Boss AI State Machine และเขียน Volumetric Fog Shader Custom
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">Unreal Engine 5</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">C++ Core</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">GAS Architecture</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">Lumen Lighting</span>
+                            </div>
+                            <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+                                <li contenteditable="false" class="editable-field">ปรับแต่ง Draw Calls และ Profiling ด้วย Insights ช่วยเพิ่ม FPS จาก 45 เป็น 60+ FPS บน RTX 2060</li>
+                                <li contenteditable="false" class="editable-field">สร้างระบบ Save/Load Binary Encryption ป้องกันการแก้ไขไฟล์ผู้เล่น</li>
+                            </ul>
+                        </div>
+
+                        <!-- Project Card 2 -->
+                        <div class="project-item pc mobile group bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-purple-500/50 rounded-2xl p-5 transition-all duration-300">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <h3 contenteditable="false" class="editable-field font-bold text-lg text-white group-hover:text-purple-400 transition-colors flex items-center gap-2">
+                                    Cyber Tactics Online
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-code bg-purple-500/20 text-purple-300 border border-purple-500/30">Multiplayer</span>
+                                </h3>
+                                <span contenteditable="false" class="editable-field text-xs font-code text-slate-400">Unity • C# • Photon Fusion</span>
+                            </div>
+                            <p contenteditable="false" class="editable-field text-xs sm:text-sm text-slate-300 mb-3 leading-relaxed">
+                                เกม Turn-based Tactics Multiplayer บน PC และ iPad วางโครงสร้าง Networking แบบ Client-Side Prediction และ Lag Compensation
+                            </p>
+                            <div class="flex flex-wrap gap-1.5 mb-3">
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">Unity C#</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">Photon Fusion 2</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">URP Graphics</span>
+                            </div>
+                            <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+                                <li contenteditable="false" class="editable-field">ออกแบบ Hexagon Grid Pathfinding โดยใช้ A* Algorithm ที่ปรับแต่งให้คำนวณเร็วขึ้น 300%</li>
+                                <li contenteditable="false" class="editable-field">เชื่อมต่อระบบ In-App Purchases (IAP) และ Cross-platform Play</li>
+                            </ul>
+                        </div>
+
+                        <!-- Project Card 3 -->
+                        <div class="project-item jam group bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-rose-500/50 rounded-2xl p-5 transition-all duration-300">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                                <h3 contenteditable="false" class="editable-field font-bold text-lg text-white group-hover:text-rose-400 transition-colors flex items-center gap-2">
+                                    Gravity Shift (Global Game Jam 2025)
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-code bg-rose-500/20 text-rose-300 border border-rose-500/30">Winner Award</span>
+                                </h3>
+                                <span contenteditable="false" class="editable-field text-xs font-code text-slate-400">Godot Engine • C#</span>
+                            </div>
+                            <p contenteditable="false" class="editable-field text-xs sm:text-sm text-slate-300 mb-3 leading-relaxed">
+                                เกม Puzzle Platformer ที่ผู้เล่นเปลี่ยนทิศทางแรงโน้มถ่วงในฉากเพื่อไขปัญญา สร้างเสร็จสมบูรณ์ภายใน 48 ชั่วโมง
+                            </p>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">Godot 4.2</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">Custom Physics</span>
+                                <span class="px-2.5 py-1 rounded-md bg-slate-950 text-slate-300 border border-slate-800 text-[11px] font-code">48-Hr Prototype</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- WORK EXPERIENCE -->
+                <section class="glass-card rounded-3xl p-6 sm:p-8 shadow-xl print-break">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-teal-400"></i>
+                        <span contenteditable="false" class="editable-field">ประวัติการทำงาน (Work Experience)</span>
+                    </h2>
+
+                    <div class="relative pl-6 border-l-2 border-slate-700/80 space-y-8">
+
+                        <!-- Job Item 1 -->
+                        <div class="relative group">
+                            <!-- Bullet Marker -->
+                            <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-950 border-2 border-teal-400 group-hover:bg-teal-400 transition-colors"></div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
+                                <h3 contenteditable="false" class="editable-field font-bold text-base text-white">Senior Gameplay Engineer</h3>
+                                <span contenteditable="false" class="editable-field text-xs font-code text-slate-400">2023 - ปัจจุบัน</span>
+                            </div>
+                            <div contenteditable="false" class="editable-field text-xs font-code text-teal-400 mb-2 font-semibold">Pixel Realm Studios Interactive</div>
+                            <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li contenteditable="false" class="editable-field">นำทีมโปรแกรมเมอร์ 6 คนในการพัฒนาเกม Action RPG ฟอร์มยักษ์บน Unreal Engine 5</li>
+                                <li contenteditable="false" class="editable-field">วางสถาปัตยกรรมระบบ Combat, State Machines และ AI Behavior Trees สำหรับศัตรูระดับ Boss</li>
+                                <li contenteditable="false" class="editable-field">ทำ Profiling Memory & CPU/GPU Bottlenecks ลดการกระตุก (Stuttering) ในระหว่างโหลดฉากแบบ Seamless</li>
+                                <li contenteditable="false" class="editable-field">ทบทวน Code Review และจัดทำวิถีปฏิบัติตามหลัก Clean Code Architecture</li>
+                            </ul>
+                        </div>
+
+                        <!-- Job Item 2 -->
+                        <div class="relative group">
+                            <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-950 border-2 border-purple-400 group-hover:bg-purple-400 transition-colors"></div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
+                                <h3 contenteditable="false" class="editable-field font-bold text-base text-white">Game Programmer & Shader Developer</h3>
+                                <span contenteditable="false" class="editable-field text-xs font-code text-slate-400">2020 - 2023</span>
+                            </div>
+                            <div contenteditable="false" class="editable-field text-xs font-code text-purple-400 mb-2 font-semibold">Neon Byte Games</div>
+                            <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li contenteditable="false" class="editable-field">เขียน Custom Shaders (HLSL / ShaderGraph) สำหรับเอฟเฟกต์สภาพอากาศ Real-time Water & Dissolve Shader</li>
+                                <li contenteditable="false" class="editable-field">พอร์ตตัวเกม Unity ไปยัง Nintendo Switch พร้อมแก้ปัญหาเรื่อง Memory Limit</li>
+                                <li contenteditable="false" class="editable-field">พัฒนาระบบ UI Dynamic Inventory System รองรับการใช้ Controller และ Touchscreen</li>
+                            </ul>
+                        </div>
+
+                        <!-- Job Item 3 -->
+                        <div class="relative group">
+                            <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-slate-950 border-2 border-amber-400 group-hover:bg-amber-400 transition-colors"></div>
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1">
+                                <h3 contenteditable="false" class="editable-field font-bold text-base text-white">Junior C++ Developer</h3>
+                                <span contenteditable="false" class="editable-field text-xs font-code text-slate-400">2018 - 2020</span>
+                            </div>
+                            <div contenteditable="false" class="editable-field text-xs font-code text-amber-400 mb-2 font-semibold">Virtual Dynamics Lab</div>
+                            <ul class="text-xs sm:text-sm text-slate-300 space-y-2 list-disc list-inside leading-relaxed">
+                                <li contenteditable="false" class="editable-field">พัฒนาเกมและโปรแกรมจำลอง Simulator 3D โดยใช้ C++ และ OpenGL Custom Engine</li>
+                                <li contenteditable="false" class="editable-field">เขียนอัลกอริทึม Rigid Body Physics Simulation เบื้องต้น</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- RIGHT SIDEBAR (1/3) -->
+            <div class="space-y-8">
+
+                <!-- TECHNICAL SKILLS MATRIX -->
+                <section class="glass-card rounded-3xl p-6 shadow-xl print-break">
+                    <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                        <i class="fa-solid fa-laptop-code text-teal-400"></i>
+                        <span contenteditable="false" class="editable-field">ทักษะทางเทคนิค (Skills)</span>
+                    </h2>
+
+                    <div class="space-y-6">
+                        <!-- Engines Progress -->
+                        <div>
+                            <h3 contenteditable="false" class="editable-field text-xs font-code uppercase text-slate-400 mb-3 tracking-wider font-semibold">Game Engines</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-200">Unreal Engine 5 (C++ / Blueprints)</span>
+                                        <span class="font-code text-teal-400">90%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                                        <div class="bg-gradient-to-r from-teal-500 to-emerald-400 h-2 rounded-full" style="width: 90%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-200">Unity Engine (C# / URP)</span>
+                                        <span class="font-code text-purple-400">95%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                                        <div class="bg-gradient-to-r from-purple-500 to-indigo-400 h-2 rounded-full" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <span class="text-slate-200">Godot Engine</span>
+                                        <span class="font-code text-amber-400">75%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                                        <div class="bg-amber-400 h-2 rounded-full" style="width: 75%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Programming Languages -->
+                        <div class="pt-2">
+                            <h3 contenteditable="false" class="editable-field text-xs font-code uppercase text-slate-400 mb-2.5 tracking-wider font-semibold">Languages</h3>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 bg-slate-900 text-slate-200 rounded-lg text-xs font-code border border-slate-700">C++ 17/20</span>
+                                <span class="px-2.5 py-1 bg-slate-900 text-slate-200 rounded-lg text-xs font-code border border-slate-700">C# (.NET)</span>
+                                <span class="px-2.5 py-1 bg-slate-900 text-slate-200 rounded-lg text-xs font-code border border-slate-700">HLSL / GLSL</span>
+                                <span class="px-2.5 py-1 bg-slate-900 text-slate-200 rounded-lg text-xs font-code border border-slate-700">Python</span>
+                                <span class="px-2.5 py-1 bg-slate-900 text-slate-200 rounded-lg text-xs font-code border border-slate-700">GLSL Shaders</span>
+                            </div>
+                        </div>
+
+                        <!-- Specializations -->
+                        <div class="pt-2">
+                            <h3 contenteditable="false" class="editable-field text-xs font-code uppercase text-slate-400 mb-2.5 tracking-wider font-semibold">Specializations</h3>
+                            <ul class="text-xs text-slate-300 space-y-2">
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-square-check text-teal-400"></i>
+                                    <span contenteditable="false" class="editable-field">3D Math & Game Physics</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-square-check text-teal-400"></i>
+                                    <span contenteditable="false" class="editable-field">Graphics & Shader Development</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-square-check text-teal-400"></i>
+                                    <span contenteditable="false" class="editable-field">Multiplayer Networking (Photon/Unreal Net)</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-square-check text-teal-400"></i>
+                                    <span contenteditable="false" class="editable-field">CPU/GPU Performance Profiling</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="fa-solid fa-square-check text-teal-400"></i>
+                                    <span contenteditable="false" class="editable-field">AI Pathfinding & State Machines</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Developer Tools -->
+                        <div class="pt-2">
+                            <h3 contenteditable="false" class="editable-field text-xs font-code uppercase text-slate-400 mb-2.5 tracking-wider font-semibold">Dev Tools</h3>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2 py-1 bg-slate-950 text-slate-400 rounded text-[11px] font-code">Visual Studio / Rider</span>
+                                <span class="px-2 py-1 bg-slate-950 text-slate-400 rounded text-[11px] font-code">RenderDoc</span>
+                                <span class="px-2 py-1 bg-slate-950 text-slate-400 rounded text-[11px] font-code">Git / Perforce</span>
+                                <span class="px-2 py-1 bg-slate-950 text-slate-400 rounded text-[11px] font-code">Blender (Pipeline)</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- GAME JAMS & AWARDS -->
+                <section class="glass-card rounded-3xl p-6 shadow-xl print-break">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-award text-rose-400"></i>
+                        <span contenteditable="false" class="editable-field">รางวัล & Game Jams</span>
+                    </h2>
+
+                    <div class="space-y-4 text-xs">
+                        <div class="border-l-2 border-rose-500 pl-3 py-1">
+                            <div contenteditable="false" class="editable-field font-bold text-slate-200">1st Winner - Global Game Jam 2025</div>
+                            <div contenteditable="false" class="editable-field text-slate-400">ออกแบบระบบ Physics Gravity Shift ที่โดดเด่นใน 48 ชม.</div>
+                        </div>
+                        <div class="border-l-2 border-amber-500 pl-3 py-1">
+                            <div contenteditable="false" class="editable-field font-bold text-slate-200">Best Technical Innovation Award</div>
+                            <div contenteditable="false" class="editable-field text-slate-400">Thailand Indie Game Showcase 2023</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- EDUCATION -->
+                <section class="glass-card rounded-3xl p-6 shadow-xl print-break">
+                    <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-purple-400"></i>
+                        <span contenteditable="false" class="editable-field">การศึกษา (Education)</span>
+                    </h2>
+
+                    <div class="space-y-2">
+                        <div contenteditable="false" class="editable-field font-bold text-sm text-slate-200">วิทยาศาสตรบัณฑิต (วิทยาการคอมพิวเตอร์)</div>
+                        <div contenteditable="false" class="editable-field text-xs text-purple-400 font-code">มหาวิทยาลัยเทคโนโลยีชั้นนำ (2014 - 2018)</div>
+                        <p contenteditable="false" class="editable-field text-xs text-slate-400 leading-relaxed">
+                            เกียรตินิยมอันดับ 1 • ปริญญานิพนธ์: 3D Graphics Engine Development using C++ & DirectX 11
+                        </p>
+                    </div>
+                </section>
+
+                <!-- LANGUAGES -->
+                <section class="glass-card rounded-3xl p-6 shadow-xl print-break">
+                    <h2 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-globe text-emerald-400"></i>
+                        <span contenteditable="false" class="editable-field">ภาษา (Languages)</span>
+                    </h2>
+
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <span contenteditable="false" class="editable-field font-medium text-slate-200">ไทย:</span>
+                            <span contenteditable="false" class="editable-field text-slate-400"> ภาษาแม่ (Native)</span>
+                        </div>
+                        <div>
+                            <span contenteditable="false" class="editable-field font-medium text-slate-200">English:</span>
+                            <span contenteditable="false" class="editable-field text-slate-400"> Fluent / Working</span>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer class="mt-12 text-center text-xs text-slate-500 border-t border-slate-800 pt-6 pb-6">
+            <p contenteditable="false" class="editable-field">© 2026 Game Developer Minimalist Resume Template • Created with Clean HTML, Tailwind CSS & JS</p>
+            <p class="no-print mt-1.5 text-slate-400">💡 คลิกปุ่ม "โหมดแก้ไข" เพื่อพิมพ์แก้ไขข้อความในหน้านี้เป็นข้อมูลของคุณเองได้ทันที</p>
+        </footer>
+
+    </main>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        let isEditMode = false;
+        let isSoundEnabled = true;
+
+        // Web Audio API Synthesizer sound generator
+        function playSfx(freq = 440, type = 'sine', duration = 0.08) {
+            if (!isSoundEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Audio context fallback
+            }
+        }
+
+        // Sound FX Toggle
+        function toggleSound() {
+            isSoundEnabled = !isSoundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (isSoundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-amber-400';
+                playSfx(587.33, 'triangle', 0.1);
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+            }
+        }
+
+        // Dark / Light Theme Toggle
+        function toggleTheme() {
+            playSfx(440, 'sine', 0.05);
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+            }
+        }
+
+        // Toast display function
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastText = document.getElementById('toastText');
+            toastText.innerText = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+
+        // Toggle Live Inline Edit Mode
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            playSfx(isEditMode ? 659.25 : 329.63, 'square', 0.12);
+
+            const editableElements = document.querySelectorAll('.editable-field');
+            const editBtnText = document.getElementById('editBtnText');
+            const editToggleBtn = document.getElementById('editToggleBtn');
+
+            editableElements.forEach(el => {
+                el.setAttribute('contenteditable', isEditMode ? 'true' : 'false');
+            });
+
+            if (isEditMode) {
+                editBtnText.innerText = 'เสร็จสิ้น';
+                editToggleBtn.classList.remove('bg-slate-800');
+                editToggleBtn.classList.add('bg-teal-600', 'text-white', 'border-teal-400');
+                showToast('เปิดโหมดแก้ไขแล้ว: คลิกข้อความตรงไหนก็ได้เพื่อพิมพ์แก้ไข');
+            } else {
+                editBtnText.innerText = 'โหมดแก้ไข';
+                editToggleBtn.classList.remove('bg-teal-600', 'text-white', 'border-teal-400');
+                editToggleBtn.classList.add('bg-slate-800');
+                showToast('บันทึกข้อความเรียบร้อยแล้ว');
+            }
+        }
+
+        // Filter Projects
+        function filterProjects(category) {
+            playSfx(523.25, 'sine', 0.06);
+            const items = document.querySelectorAll('.project-item');
+            const btns = document.querySelectorAll('.filter-btn');
+
+            btns.forEach(btn => {
+                btn.classList.remove('bg-teal-500', 'text-white', 'font-semibold');
+                btn.classList.add('text-slate-300');
+            });
+            event.target.classList.add('bg-teal-500', 'text-white', 'font-semibold');
+
+            items.forEach(item => {
+                if (category === 'all' || item.classList.contains(category)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Print / Export PDF Handler
+        function triggerPrint() {
+            playSfx(880, 'sine', 0.15);
+            // Ensure edit mode is off before printing
+            if (isEditMode) toggleEditMode();
+            window.print();
+        }
+    </script>
 </body>
 </html>
-```
